@@ -12,7 +12,11 @@ class Cell
     @opened = false
   end
 
-  def closed
+  def close
     @opened = false
+  end
+
+  def open
+    @opened = true
   end
 end

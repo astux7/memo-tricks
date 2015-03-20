@@ -12,11 +12,10 @@ class Board
   # +---+---+---+---+
   
   attr_accessor :grid
-  attr_reader :answer
   
   def initialize
-    @answer, @grid = generate_answer, []
-    @answer.each do |colour|
+    @grid = []
+    generate_answer.each do |colour|
       @grid << Cell.new(colour)
     end
   end
@@ -24,35 +23,43 @@ class Board
   # returns false if illegal move
   # and player id if it is legal
   def move(square)
+    # opened 2 cells
     if opened_cells.count == 2 
-      if opened_cells.first.color == opened_cells.last.color
-        opened_cells.first.make_active
-        opened_cells.last.make_active
-      else
-        opened_cells.first.closed
-        opened_cells.last.closed
-      end
+      opened_two_cells
     end
-    if @grid[square].opened == false && @grid[square].active==false
-      @grid[square].opened = true
+    # opened closed cell
+    if closed_cell?(square)
+      @grid[square].open
     end
   end
 
-  # resets the grid
-  def reset 
-    @answer = generate_answer
-    @grid = []
-    @answer.each do |colour|
-      @grid << Cell.new(colour)
-    end
-  end
-  
   # if all active cells
   def game_over?
     last_one? ? true : false
   end
 
   private
+
+  def closed_cell?(square)
+    !@grid[square].opened && !@grid[square].active
+  end
+
+  def opened_two_cells
+    if opened_cells.first.color == opened_cells.last.color
+      return opened_same_cells
+    end
+    opened_different_cells
+  end
+
+  def opened_same_cells
+    opened_cells.first.make_active
+    opened_cells.last.make_active
+  end
+
+  def opened_different_cells
+    opened_cells.first.close
+    opened_cells.last.close
+  end
 
   def last_one?
     inactive_cells.count - opened_cells.count == 0

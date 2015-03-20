@@ -54,7 +54,6 @@ class BoardViewController < UIViewController
   def new_game
     # initalize the game
     @board = Board.new
-    @current_player = 0
   end  
   
   def touchesEnded(touches, withEvent:event)
@@ -67,7 +66,7 @@ class BoardViewController < UIViewController
     end
     # check if the game is over
     if @board.game_over?
-      @board.reset
+      new_game
       show_info("Game finished")
     end
     board_changed
